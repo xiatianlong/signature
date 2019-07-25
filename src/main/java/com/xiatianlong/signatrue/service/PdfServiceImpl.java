@@ -28,13 +28,13 @@ public class PdfServiceImpl implements PdfService {
     @Override
     @Transactional
     public PdfEntity savePdf(PdfEntity pdfEntity) throws ApplicationException {
-        if (pdfEntity == null || StringUtils.isEmpty(pdfEntity.getIdNo()) || StringUtils.isEmpty(pdfEntity.getMobile())){
-            throw new ApplicationException("请完整填写身份证、手机号");
+        if (pdfEntity == null || StringUtils.isEmpty(pdfEntity.getPdf())){
+            throw new ApplicationException("请进行签名");
         }
-        PdfEntity temp = pdfRepository.findByIdNo(pdfEntity.getIdNo());
-        if (temp != null){
-            throw new ApplicationException("您已填提交过合同，请勿重新提交");
-        }
+//        PdfEntity temp = pdfRepository.findByIdNo(pdfEntity.getIdNo());
+//        if (temp != null){
+//            throw new ApplicationException("您已填提交过合同，请勿重新提交");
+//        }
         pdfEntity.setCreatedDate(new Date());
         return pdfRepository.saveAndFlush(pdfEntity);
     }

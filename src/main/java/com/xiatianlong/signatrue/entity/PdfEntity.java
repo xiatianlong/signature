@@ -14,10 +14,10 @@ public class PdfEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "id_no", nullable = false, length = 100)
+    @Column(name = "id_no", length = 100)
     private String idNo;
 
-    @Column(name = "mobile", nullable = false, length = 50)
+    @Column(name = "mobile", length = 50)
     private String mobile;
 
     @Column(name = "pdf", nullable = false)

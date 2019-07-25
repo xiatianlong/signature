@@ -17,6 +17,11 @@ public class FileUploadResult extends AsynchronousResult {
     private String fileUrl;
 
     /**
+     * 文件存储在本地的路劲
+     */
+    private String localFileUrl;
+
+    /**
      * 文件大小
      */
     private long fileSize;
@@ -81,5 +86,19 @@ public class FileUploadResult extends AsynchronousResult {
      */
     public void setFileName(String fileName) {
         this.fileName = fileName;
+    }
+
+    /**
+     * 获取 文件存储在本地的路劲
+     */
+    public String getLocalFileUrl() {
+        return this.localFileUrl;
+    }
+
+    /**
+     * 设置 文件存储在本地的路劲
+     */
+    public void setLocalFileUrl(String localFileUrl) {
+        this.localFileUrl = localFileUrl;
     }
 }

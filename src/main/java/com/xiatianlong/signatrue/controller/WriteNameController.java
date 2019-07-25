@@ -16,6 +16,7 @@ import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.ResourceUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -30,7 +31,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 
 @RestController
-@RequestMapping("/writeName")
+@RequestMapping("/signatureServer/writeName")
 public class WriteNameController {
 
     @Autowired
@@ -39,6 +40,9 @@ public class WriteNameController {
     @PostMapping("/submit")
     public AsynchronousResult submit(PdfEntity pdfEntity) throws Exception {
 
+        if (pdfEntity == null || StringUtils.isEmpty(pdfEntity.getPdf())){
+            throw new ApplicationException("请进行签名");
+        }
         // 创建签名图片文件
         MultipartFile multipartFile = FileUtil.base64Convert(pdfEntity.getPdf());
 
@@ -63,9 +67,9 @@ public class WriteNameController {
      * @throws IOException io E
      */
     private FileUploadResult pdfHandle(byte[] byteArr) throws Exception {
-
+        String path = ResourceUtils.getURL("").getPath();
         // 1. 加载文档
-        PDDocument doc = PDDocument.load(ResourceUtils.getFile("classpath:static/main.pdf"));
+        PDDocument doc = PDDocument.load(ResourceUtils.getFile("/usr/local/software/main.pdf"));
         //Retrieving the page
         PDPage page = doc.getPage(5);
 
@@ -83,15 +87,17 @@ public class WriteNameController {
         contents.close();
 
         //Saving the document
-        String path = ResourceUtils.getURL("").getPath();
-        String fileLocation = path + "/src/main/resources/" + UUIDUtil.getUUID() + ".pdf";
+        String uuid = UUIDUtil.getUUID();
+        String fileLocation = "/usr/local/software/tempPdf/" + uuid + ".pdf";
 
         File file = new File(fileLocation);
         doc.save(file);
 
         FileUploadResult fileUploadResult = FileUploadUtil.uploadFile(file);
         // 删除生成的临时文件
-        file.delete();
+        fileUploadResult.setFileName(uuid + ".pdf");
+        fileUploadResult.setLocalFileUrl(fileLocation);
+//        file.delete();
 
         //Closing the document
         doc.close();
