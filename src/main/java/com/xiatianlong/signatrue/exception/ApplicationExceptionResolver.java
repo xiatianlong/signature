@@ -5,6 +5,7 @@ import com.xiatianlong.signatrue.utils.AsynchronousRequestUtil;
 import com.xiatianlong.signatrue.utils.SerializeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
@@ -17,13 +18,11 @@ import java.util.Locale;
  * 全局异常处理
  * Created by xiatianlong on 2017/12/28.
  */
+@Component
 public class ApplicationExceptionResolver implements HandlerExceptionResolver {
 
     @Autowired
     protected MessageSource messageSource;
-
-    @Autowired
-    protected FreeMarkerConfigurer mailTemplate;
 
     /**
      * single message
@@ -53,7 +52,7 @@ public class ApplicationExceptionResolver implements HandlerExceptionResolver {
             }
 
             // 向前端返回异常信息
-            if (AsynchronousRequestUtil.isAsynchronousRequest(request)) {
+//            if (AsynchronousRequestUtil.isAsynchronousRequest(request)) {
                 // 异步
                 AsynchronousResult result = new AsynchronousResult();
                 result.setMessage(applicationException.getMessage());
@@ -61,12 +60,12 @@ public class ApplicationExceptionResolver implements HandlerExceptionResolver {
                 response.getWriter().print(SerializeUtil.serialize(result));
                 return new ModelAndView();
 
-            } else {
-                // 同步
-                ModelAndView modelAndView = new ModelAndView("error/exception");
-                modelAndView.addObject("errorMessage", applicationException.getMessage());
-                return modelAndView;
-            }
+//            } else {
+//                // 同步
+//                ModelAndView modelAndView = new ModelAndView("error/exception");
+//                modelAndView.addObject("errorMessage", applicationException.getMessage());
+//                return modelAndView;
+//            }
         } catch (Exception e) {
             // do nothing
             e.printStackTrace();

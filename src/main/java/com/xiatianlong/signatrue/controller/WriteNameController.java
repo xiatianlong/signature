@@ -1,7 +1,12 @@
 package com.xiatianlong.signatrue.controller;
 
 
+import com.xiatianlong.signatrue.common.Constant;
+import com.xiatianlong.signatrue.entity.PdfEntity;
+import com.xiatianlong.signatrue.exception.ApplicationException;
+import com.xiatianlong.signatrue.model.AsynchronousResult;
 import com.xiatianlong.signatrue.model.FileUploadResult;
+import com.xiatianlong.signatrue.service.PdfService;
 import com.xiatianlong.signatrue.utils.FileUploadUtil;
 import com.xiatianlong.signatrue.utils.FileUtil;
 import com.xiatianlong.signatrue.utils.UUIDUtil;
@@ -9,6 +14,7 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.ResourceUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,17 +33,26 @@ import java.net.URL;
 @RequestMapping("/writeName")
 public class WriteNameController {
 
+    @Autowired
+    private PdfService pdfService;
+
     @PostMapping("/submit")
-    public Object submit(String file) throws Exception {
+    public AsynchronousResult submit(PdfEntity pdfEntity) throws Exception {
 
         // 创建签名图片文件
-        MultipartFile multipartFile = FileUtil.base64Convert(file);
+        MultipartFile multipartFile = FileUtil.base64Convert(pdfEntity.getPdf());
 
 //        FileUploadResult wirteNameFile = FileUploadUtil.uploadFile(multipartFile);
 
         // 获取pdf
         FileUploadResult fileUploadResult = pdfHandle(multipartFile.getBytes());
-        return fileUploadResult;
+        pdfEntity.setPdf(fileUploadResult.getFileUrl());
+        pdfService.savePdf(pdfEntity);
+
+        AsynchronousResult result = new AsynchronousResult();
+        result.setResult(Constant.SUCCESS);
+        result.setData(fileUploadResult);
+        return result;
     }
 
 
